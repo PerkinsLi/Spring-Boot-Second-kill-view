@@ -1,0 +1,32 @@
+<div us-top></div>
+<div class="detail">
+    <div class="content">
+        <div class="left">
+            <img ng-src="{{goods.goodsImg}}" />
+        </div>
+        <div class="right">
+            <div class="title" ng-bind="goods.goodsName"></div>
+            <div class="detail" ng-bind="goods.goodsDetail"></div>
+            <div class="price"><b>￥</b>
+                <b ng-bind="goods.goodsPrice" ng-if="goods.secondkillGoodsPrice == null"></b>
+                <b ng-bind="goods.secondkillGoodsPrice" ng-if="goods.secondkillGoodsPrice != null"></b>
+            </div>
+
+            <div ng-if="goods.secondkillGoodsPrice != null" class="sk-status" >
+                <div ng-bind="skStatusText" class="skStatusText"></div>
+                <div ng-if="$scope.remainSeconds != 0" ng-bind="skDate" class="skDate"></div>
+            </div>
+
+            <div class="buy">
+                <input ng-if="goods.secondkillGoodsPrice == null" type="text" id="buyNum_{{goods.id}}" value="1" class="input-border"/>
+                <div class="add-reduce" ng-if="goods.secondkillGoodsPrice == null">
+                    <span class="fa fa-angle-up" ng-click="modifyBuyNum(goods.id,+1)"></span>
+                    <span class="fa fa-angle-down" ng-click="modifyBuyNum(goods.id,-1)"></span>
+                </div>
+                <div class="add-cart" ng-click="addCart(goods.id)" ng-if="goods.secondkillGoodsPrice == null">加入购物车</div>
+                <div class="add-cart" ng-click="shopingNow(goods.id)" ng-if="goods.secondkillGoodsPrice == null">立刻购买</div>
+                <div class="add-cart" ng-if="goods.secondkillGoodsPrice != null">立即秒杀</div>
+            </div>
+        </div>
+    </div>
+</div>
