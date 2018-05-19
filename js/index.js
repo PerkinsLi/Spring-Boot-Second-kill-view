@@ -983,7 +983,7 @@
             }
         }
 
-        //结算
+        //结算生成订单
         $scope.createOrder = function() {
             $scope.goodsInfomation = "";
             var goodsObjects = $(".goods-content .goods .check-box");
