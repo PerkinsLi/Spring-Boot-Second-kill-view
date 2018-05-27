@@ -144,7 +144,6 @@
                     });
                     $rootScope.wcome = "Hi, 请 ";
                     $rootScope.name = "登录";
-                    loadInformation();
                 }
             });
         };
@@ -175,7 +174,7 @@
     });
 
     // goodsListController
-    app.controller("goodsList", function ($rootScope, $scope, $http, $state, $stateParams) {
+    app.controller("goodsList", function ($rootScope, $scope, $http, $state, $stateParams, $timeout) {
 
         $scope.pageData = {
             currentPage: 0,
@@ -321,6 +320,62 @@
                 });
             }
         };
+
+        //立即秒杀
+        $scope.doSecondKill = function(goodsId) {
+
+            if (JSON.stringify($rootScope.user) === '{}') {
+                layer.open({
+                    content: "您还没有登录，请先登录",
+                    time: 2000,
+                    offset: '400px'
+                });
+            } else {
+                $http({
+                    method: "POST",
+                    url: "http://localhost:8080/sk/do_second_kill",
+                    withCredentials: true,
+                    params: {
+                        'goodsId': goodsId
+                    }
+                }).then(function(resp){
+                    var data = resp.data;
+                    if(data.code === 0) {
+                        $scope.getSKResult(goodsId); 
+                    } else {
+                        layer.open({
+                            content: data.msg,
+                            time: 2000,
+                            offset: '400px'
+                        });
+                    }
+                });
+            }
+        }
+
+        // 查询秒杀结果
+        $scope.getSKResult = function(goodsId) {
+            $http({
+                method: "GET",
+                url: "http://localhost:8080/sk/result",
+                withCredentials: true,
+                params: {
+                    'goodsId': goodsId
+                }
+            }).then(function(resp){
+                var data = resp.data.data;
+                var timeHander;
+                if(data < 0) {
+                    layer.msg("秒杀失败");
+                }else if(data == 0) {
+                    layer.msg("排队中");
+                    $scope.getSKResult(goodsId); 
+                } else {
+                    layer.msg("恭喜你，秒杀成功！");
+                    $state.go("createOrder", {"orderNumber":data});
+                }
+            });
+        }
 
         //转到detail页面
         $scope.toDetail = function (id) {

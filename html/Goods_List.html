@@ -41,7 +41,7 @@
 			            <span class="fa fa-angle-down" ng-click="modifyBuyNum(g.id,-1)"></span>
 			            </div>
 						<div class="add-cart" ng-click="addCart(g.id)" ng-if="g.secondkillGoodsPrice == null">加入购物车</div>
-						<div class="add-cart" ng-if="g.secondkillGoodsPrice != null">立即秒杀</div>
+						<div class="add-cart" ng-click="doSecondKill(g.id)" ng-if="g.secondkillGoodsPrice != null">立即秒杀</div>
 			        </div>
 			    </div>
                  
