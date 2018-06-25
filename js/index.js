@@ -144,6 +144,7 @@
                     });
                     $rootScope.wcome = "Hi, 请 ";
                     $rootScope.name = "登录";
+                    $state.go("goodsList");
                 }
             });
         };
@@ -464,6 +465,7 @@
                         formatSkDate($scope.remainSeconds);
                     } else if ($scope.secondkillStatus == 1) {
                         $scope.skStatusText = "秒杀进行中";
+                        $scope.skDate = "00 天 00 时 00 分 00 秒";
                     } else {
                         $scope.skStatusText = "秒杀已结束";
                     }
@@ -478,9 +480,10 @@
                 if ($scope.remainSeconds < 0) {
                     $interval.cancel(timeHander);
                     $scope.skStatusText = "秒杀进行中";
+                    $scope.skDate = "00 天 00 时 00 分 00 秒";
                 } else {
                     $scope.remainSeconds = parseInt($scope.remainSeconds) - 1;
-                    $scope.skDate = formatDate($scope.remainSeconds);
+                    $scope.skDate = formatDate($scope.remainSeconds); 
                 }
 
 
@@ -512,19 +515,19 @@
             }
 
             if (days > 0) {
-                date = date + days + " 天";
+                date = date + days + " 天 ";
             }
 
             if (hours > 0) {
-                date = date + hours + " 时";
+                date = date + hours + " 时 ";
             }
 
             if (mins > 0) {
-                date = date + mins + " 分";
+                date = date + mins + " 分 ";
             }
 
             if (seconds > 0) {
-                date = date + seconds + " 秒";
+                date = date + seconds + " 秒 ";
             }
 
             return date;
@@ -631,6 +634,70 @@
                 });
             }
         };
+
+        //立即秒杀
+        $scope.doSecondKill = function(goodsId) {
+
+            if (JSON.stringify($rootScope.user) === '{}') {
+                layer.open({
+                    content: "您还没有登录，请先登录",
+                    time: 2000,
+                    offset: '400px'
+                });
+            } else {
+                if ($scope.remainSeconds > 0) {
+                    layer.open({
+                        content: "秒杀还未开始",
+                        time: 2000,
+                        offset: '400px'
+                    });
+                    return;
+                }
+                $http({
+                    method: "POST",
+                    url: "http://localhost:8080/sk/do_second_kill",
+                    withCredentials: true,
+                    params: {
+                        'goodsId': goodsId
+                    }
+                }).then(function(resp){
+                    var data = resp.data;
+                    if(data.code === 0) {
+                        $scope.getSKResult(goodsId); 
+                    } else {
+                        layer.open({
+                            content: data.msg,
+                            time: 2000,
+                            offset: '400px'
+                        });
+                    }
+                });
+            }
+        }
+
+        // 查询秒杀结果
+        $scope.getSKResult = function(goodsId) {
+            $http({
+                method: "GET",
+                url: "http://localhost:8080/sk/result",
+                withCredentials: true,
+                params: {
+                    'goodsId': goodsId
+                }
+            }).then(function(resp){
+                var data = resp.data.data;
+                var timeHander;
+                if(data < 0) {
+                    layer.msg("秒杀失败");
+                }else if(data == 0) {
+                    layer.msg("排队中");
+                    $scope.getSKResult(goodsId); 
+                } else {
+                    layer.msg("恭喜你，秒杀成功！");
+                    $state.go("createOrder", {"orderNumber":data});
+                }
+            });
+        }
 
  
     });
@@ -1010,7 +1077,7 @@
             var countMoney = parseInt(price)  * parseInt(number)
 
             var isChecked = $("#checkBox_"+scId).prop("checked");
-
+           
             if(isChecked) {
                 $scope.countNumber = $scope.countNumber +countMoney;
             } else {
@@ -1025,14 +1092,14 @@
 
             if(isChecked) {
                 for(var i=0; i<goodsObjects.length; i++) {
-                    $(goodsObjects[i]).attr("checked",true);
+                    $(goodsObjects[i]).prop("checked",true);
                     var price = $(goodsObjects[i]).parent().find(".goods-price").text();
                     var number = $(goodsObjects[i]).parent().find(".input-border").val();
                     $scope.countNumber = parseInt(price) * parseInt(number) + $scope.countNumber;
                 }
             } else {
                 for(var i=0; i<goodsObjects.length; i++) {
-                    $(goodsObjects[i]).attr("checked",false);
+                    $(goodsObjects[i]).prop("checked",false);
                     $scope.countNumber = 0;
                 }
             }
@@ -1080,6 +1147,15 @@
           replace: true,
           templateUrl: "../html/top.html",
           controller: "top"
+        }
+      });
+
+      // bottom directive
+    window.us.directive("usBottom", function () {
+        return {
+          restrict: "A",
+          replace: true,
+          templateUrl: "../html/bottom.html"
         }
       });
 

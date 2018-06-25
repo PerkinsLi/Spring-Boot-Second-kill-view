@@ -25,7 +25,7 @@
                 </div>
                 <div class="add-cart" ng-click="addCart(goods.id)" ng-if="goods.secondkillGoodsPrice == null">加入购物车</div>
                 <div class="add-cart" ng-click="shopingNow(goods.id)" ng-if="goods.secondkillGoodsPrice == null">立刻购买</div>
-                <div class="add-cart" ng-if="goods.secondkillGoodsPrice != null">立即秒杀</div>
+                <div class="add-cart" ng-click="doSecondKill(goods.id)" ng-if="goods.secondkillGoodsPrice != null">立即秒杀</div>
             </div>
         </div>
     </div>

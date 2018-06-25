@@ -96,9 +96,15 @@
 .goods-list .screen .price .button-input {
   cursor: pointer;
 }
+.goods-list .clear-fix::after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
 .goods-list .content {
   width: 1228px;
-  min-height: 340px;
   margin: 0 auto;
 }
 .goods-list .content .goods {

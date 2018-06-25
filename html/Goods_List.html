@@ -26,7 +26,7 @@
 					<input type="button" value="取消"  class="button-input" ng-click="resetSearchPrice()"/>
 				</div>
 			</div>
-			<div class="content">
+			<div class="content clear-fix">
 			    <div class="goods" ng-repeat="g in goodsList">
 			        <img ng-src="{{g.goodsImg}}" />
 					<div class="price"><b>￥</b>
@@ -49,3 +49,4 @@
 
 			<div us-pagination go-page="goPage(pageIndex)" current-page = "currentPage" page-data = "pageData"></div>
 		</div>
+		
